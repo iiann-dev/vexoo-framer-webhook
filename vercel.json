@@ -4,6 +4,5 @@
     "api/webhook.js": {
       "maxDuration": 10
     }
-  },
-  "excludeFiles": ["server.js", "test/**", "tmp/**", "*.md", ".env*"]
+  }
 }
