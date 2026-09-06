@@ -119,8 +119,11 @@ function fakeRes() {
 
   console.log("\n=== Local server (server.js) via real HTTP ===");
   const mod = require("../server.js");
-  await new Promise((r2) => setTimeout(r2, 300));
-  const base = "http://127.0.0.1:8791";
+  // server.listen() no longer auto-starts (guarded by require.main === module for Vercel compat)
+  // so we explicitly start it here for tests:
+  const localPort = parseInt(process.env.PORT || "8791", 10);
+  await new Promise((resolve) => mod.server.listen(localPort, "127.0.0.1", resolve));
+  const base = `http://127.0.0.1:${localPort}`;
 
   makeReceived = [];
   let rr = await fetch(base + "/", {

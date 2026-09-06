@@ -1,6 +1,9 @@
 // vexoo-framer-webhook — local dev server
 // Same core as the Vercel function. Run: npm start | npm test
 // Env: PORT, FRAMER_WEBHOOK_SECRET, MAKE_WEBHOOK_URL
+// NOTE: startup checks + listen only run when this file is the ENTRY POINT.
+//       When required as a module (Vercel function loads api/webhook.js -> lib/core.js),
+//       this file does NOT run — so process.exit() never fires on Vercel.
 
 const http = require("http");
 const { isSignatureValid, forwardToMake, readRawBody } = require("./lib/core");
@@ -8,20 +11,7 @@ const { isSignatureValid, forwardToMake, readRawBody } = require("./lib/core");
 const PORT = parseInt(process.env.PORT || "8787", 10);
 const SECRET = process.env.FRAMER_WEBHOOK_SECRET || "";
 const MAKE_URL = process.env.MAKE_WEBHOOK_URL || "";
-
-if (!SECRET) {
-  console.error("[startup] FRAMER_WEBHOOK_SECRET is not set. Refusing to start.");
-  process.exit(1);
-}
-if (!MAKE_URL) {
-  console.error("[startup] MAKE_WEBHOOK_URL is not set. Refusing to start.");
-  process.exit(1);
-}
 const ALLOW_TEST = process.env.ALLOW_TEST_MAKE_URL === "1";
-if (!ALLOW_TEST && !/^https:\/\/hook\.make\.com\//.test(MAKE_URL)) {
-  console.error("[startup] MAKE_WEBHOOK_URL must be a https://hook.make.com/... URL.");
-  process.exit(1);
-}
 
 const server = http.createServer(async (req, res) => {
   if (req.method !== "POST") {
@@ -59,8 +49,23 @@ const server = http.createServer(async (req, res) => {
   return res.end("Forward failed");
 });
 
-server.listen(PORT, () => {
-  console.log(`[vexoo-framer-webhook] listening on :${PORT}`);
-});
+// ---- Only start listening + run startup checks when THIS file is the entry point ----
+if (require.main === module) {
+  if (!SECRET) {
+    console.error("[startup] FRAMER_WEBHOOK_SECRET is not set. Refusing to start.");
+    process.exit(1);
+  }
+  if (!MAKE_URL) {
+    console.error("[startup] MAKE_WEBHOOK_URL is not set. Refusing to start.");
+    process.exit(1);
+  }
+  if (!ALLOW_TEST && !/^https:\/\/hook\.make\.com\//.test(MAKE_URL)) {
+    console.error("[startup] MAKE_WEBHOOK_URL must be a https://hook.make.com/... URL.");
+    process.exit(1);
+  }
+  server.listen(PORT, () => {
+    console.log(`[vexoo-framer-webhook] listening on :${PORT}`);
+  });
+}
 
 module.exports = { isSignatureValid, forwardToMake, server };
