@@ -1,0 +1,14 @@
+{
+  "name": "vexoo-framer-webhook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Secure middleware: verify Framer webhook signature (Framer-Signature HMAC-SHA256) then forward to Make.com",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/run.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
