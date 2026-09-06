@@ -5,7 +5,7 @@
   "description": "Secure middleware: verify Framer webhook signature (Framer-Signature HMAC-SHA256) then forward to Make.com",
   "scripts": {
     "test": "node test/run.js",
-    "dev": "node server.js"
+    "dev": "node dev-server.js"
   },
   "engines": {
     "node": ">=18.0.0"

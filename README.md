@@ -32,7 +32,7 @@ In Framer editor → Contact form → Form Settings → "Send responses to" → 
 ## Local dev
 ```
 cp .env.example .env   # fill secrets
-npm start              # http://localhost:8787
+npm run dev            # http://localhost:8787
 npm test               # 18 tests
 ```
 

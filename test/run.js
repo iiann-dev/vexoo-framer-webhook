@@ -117,8 +117,8 @@ function fakeRes() {
   ok("Make 500 => 502", st.status === 502);
   makeRespond = { status: 200 };
 
-  console.log("\n=== Local server (server.js) via real HTTP ===");
-  const mod = require("../server.js");
+  console.log("\n=== Local server (dev-server.js) via real HTTP ===");
+  const mod = require("../dev-server.js");
   // server.listen() no longer auto-starts (guarded by require.main === module for Vercel compat)
   // so we explicitly start it here for tests:
   const localPort = parseInt(process.env.PORT || "8791", 10);
